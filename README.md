@@ -1,2 +1,0 @@
-# lammpz
-group project
