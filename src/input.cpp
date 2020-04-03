@@ -854,7 +854,7 @@ int Input::execute_command()
   else if (!strcmp(command,"units")) units();
   
   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  else if (!strcmp(command,"veolicity")) set_viscosity();
+  else if (!strcmp(command,"viscosity")) set_viscosity();
 
   else flag = 0;
 

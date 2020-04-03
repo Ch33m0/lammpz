@@ -39,7 +39,7 @@
 #include "error.h"
 #include "utils.h"
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//#include "viscosity.h"  //should this be here or just in atom.h? 
+#include "4Pviscosity.h"  //is this necessary for compilation... dont understand that tbh
 
 #ifdef LMP_USER_INTEL
 #include "neigh_request.h"
@@ -2363,7 +2363,7 @@ void Atom::set_viscosity(int narg, char **arg) {
         sscanf(arg[2],"%lg",&p2);
         sscanf(arg[3],"%lg",&p3);
         sscanf(arg[4],"%lg",&p4);
-        this->viscosity = new 4Pviscosity(p1, p2, p3, p4);
+        this->viscosity = new Viscosity4P(p1, p2, p3, p4);
         printf("4P viscosity chosen\n");
     }
     else {

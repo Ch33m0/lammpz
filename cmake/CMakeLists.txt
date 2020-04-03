@@ -548,7 +548,11 @@ if(BUILD_LIB)
     ${LAMMPS_SOURCE_DIR}/timer.h
     ${LAMMPS_SOURCE_DIR}/universe.h
     ${LAMMPS_SOURCE_DIR}/update.h
-    ${LAMMPS_SOURCE_DIR}/variable.h)
+    ${LAMMPS_SOURCE_DIR}/variable.h
+    ${LAMMPS_SOURCE_DIR}/viscosity.h
+    ${LAMMPS_SOURCE_DIR}/4Pviscosity.h
+    )
+    
 
   set_target_properties(lammps PROPERTIES OUTPUT_NAME lammps${LAMMPS_LIB_SUFFIX})
   set_target_properties(lammps PROPERTIES SOVERSION ${SOVERSION})

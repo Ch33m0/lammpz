@@ -38,6 +38,8 @@ PairSPHTaitwater::~PairSPHTaitwater() {
   if (allocated) {
     memory->destroy(setflag);
     memory->destroy(cutsq);
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //memory->destroy(viscosity);
 
     memory->destroy(cut);
     memory->destroy(rho0);
@@ -219,6 +221,7 @@ void PairSPHTaitwater::allocate() {
   memory->create(soundspeed, n + 1, "pair:soundspeed");
   memory->create(B, n + 1, "pair:B");
   memory->create(cut, n + 1, n + 1, "pair:cut");
+  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111
  // memory->create(viscosity, n + 1, n + 1, "pair:viscosity");
 }
 

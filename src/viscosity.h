@@ -5,13 +5,15 @@
 #ifndef LAMMPS_VISCOSITY_H
 #define LAMMPS_VISCOSITY_H
 
+#include "math.h"
+
 namespace LAMMPS_NS {
 
     class Viscosity {
     public:
     
         Viscosity();
-        virutal double computeViscosity(double temperature) = 0;
+        virtual double computeViscosity(double temperature)=0;
     };
 }
 
