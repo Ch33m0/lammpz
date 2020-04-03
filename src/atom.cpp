@@ -11,6 +11,9 @@
    See the README file in the top-level LAMMPS directory.
 ------------------------------------------------------------------------- */
 
+// CALLUM: added include for viscosity class header, at very end of document added the method that reads the arguments from input
+//         file and determines what kind of viscosity will be used, and then accepts the parameters for this kind and instantiates it.
+
 #include "atom.h"
 #include <mpi.h>
 #include <climits>
@@ -35,6 +38,8 @@
 #include "memory.h"
 #include "error.h"
 #include "utils.h"
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//#include "viscosity.h"  //should this be here or just in atom.h? 
 
 #ifdef LMP_USER_INTEL
 #include "neigh_request.h"
@@ -2343,4 +2348,25 @@ int Atom::memcheck(const char *str)
   strcat(memstr,padded);
   delete [] padded;
   return 1;
+}
+
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+void Atom::set_viscosity(int narg, char **arg) {
+
+    if (narg<1) error->all(FLERR,"Viscosity input error: too few arguments");
+    //four param version
+    if (!strcmp(arg[0], "4P")){
+        if (narg != 5) error->all(FLERR,"Viscosity input error: wrong number of arguments for 4Pviscosity style");
+        double p1, p2, p3, p4;
+        sscanf(arg[1],"%lg",&p1);
+        sscanf(arg[2],"%lg",&p2);
+        sscanf(arg[3],"%lg",&p3);
+        sscanf(arg[4],"%lg",&p4);
+        this->viscosity = new 4Pviscosity(p1, p2, p3, p4);
+        printf("4P viscosity chosen\n");
+    }
+    else {
+        printf(" %s", arg[0]);
+    }
 }

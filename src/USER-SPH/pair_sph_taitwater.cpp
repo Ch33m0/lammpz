@@ -43,7 +43,6 @@ PairSPHTaitwater::~PairSPHTaitwater() {
     memory->destroy(rho0);
     memory->destroy(soundspeed);
     memory->destroy(B);
-    memory->destroy(viscosity);
   }
 }
 
@@ -69,6 +68,8 @@ void PairSPHTaitwater::compute(int eflag, int vflag) {
   int *type = atom->type;
   int nlocal = atom->nlocal;
   int newton_pair = force->newton_pair;
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  Viscosity * viscosity = atom->viscosity;
 
   // check consistency of pair coefficients
 
@@ -157,8 +158,12 @@ void PairSPHTaitwater::compute(int eflag, int vflag) {
 
         // artificial viscosity (Monaghan 1992)
         if (delVdotDelR < 0.) {
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
           mu = h * delVdotDelR / (rsq + 0.01 * h * h);
-          fvisc = -viscosity[itype][jtype] * (soundspeed[itype]
+          double T = ((e[nlocal]-500)/(0.1*4117)+300);
+          // not sure about the soundspeed part of this, will need to look into it
+          double alpha = (8*viscosity->computeViscosity(T))/(h*soundspeed[itype]);
+          fvisc = -alpha * (soundspeed[itype]
               + soundspeed[jtype]) * mu / (rho[i] + rho[j]);
         } else {
           fvisc = 0.;
@@ -214,7 +219,7 @@ void PairSPHTaitwater::allocate() {
   memory->create(soundspeed, n + 1, "pair:soundspeed");
   memory->create(B, n + 1, "pair:B");
   memory->create(cut, n + 1, n + 1, "pair:cut");
-  memory->create(viscosity, n + 1, n + 1, "pair:viscosity");
+ // memory->create(viscosity, n + 1, n + 1, "pair:viscosity");
 }
 
 /* ----------------------------------------------------------------------
@@ -244,7 +249,8 @@ void PairSPHTaitwater::coeff(int narg, char **arg) {
 
   double rho0_one = force->numeric(FLERR,arg[2]);
   double soundspeed_one = force->numeric(FLERR,arg[3]);
-  double viscosity_one = force->numeric(FLERR,arg[4]);
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ // double viscosity_one = force->numeric(FLERR,arg[4]);
   double cut_one = force->numeric(FLERR,arg[5]);
   double B_one = soundspeed_one * soundspeed_one * rho0_one / 7.0;
 
@@ -254,7 +260,8 @@ void PairSPHTaitwater::coeff(int narg, char **arg) {
     soundspeed[i] = soundspeed_one;
     B[i] = B_one;
     for (int j = MAX(jlo,i); j <= jhi; j++) {
-      viscosity[i][j] = viscosity_one;
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //  viscosity[i][j] = viscosity_one;
       //printf("setting cut[%d][%d] = %f\n", i, j, cut_one);
       cut[i][j] = cut_one;
 
@@ -282,7 +289,8 @@ double PairSPHTaitwater::init_one(int i, int j) {
   }
 
   cut[j][i] = cut[i][j];
-  viscosity[j][i] = viscosity[i][j];
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
+  //viscosity[j][i] = viscosity[i][j];
 
   return cut[i][j];
 }

@@ -11,12 +11,16 @@
    See the README file in the top-level LAMMPS directory.
 ------------------------------------------------------------------------- */
 
+//NOTES: line 297 added declaration for set_vicosity() method, line 314 added a public Viscosity member for the atom class
+
 #ifndef LMP_ATOM_H
 #define LMP_ATOM_H
 
 #include "pointers.h"
 #include <map>
 #include <string>
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#include "viscosity.h" //here only or in atom.cpp?? dunno, have to test both
 
 namespace LAMMPS_NS {
 
@@ -291,6 +295,10 @@ class Atom : protected Pointers {
 
   bigint memory_usage();
   int memcheck(const char *);
+  
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+
+  void set_viscosity(int narg, char **arg);
 
   // functions for global to local ID mapping
   // map lookup function inlined for efficiency
@@ -301,6 +309,11 @@ class Atom : protected Pointers {
     else if (map_style == 2) return map_find_hash(global);
     else return -1;
   };
+  
+  
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  Viscosity *viscosity;
+
 
   void map_init(int check = 1);
   void map_clear();

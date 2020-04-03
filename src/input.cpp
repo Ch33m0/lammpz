@@ -11,6 +11,8 @@
    See the README file in the top-level LAMMPS directory.
 ------------------------------------------------------------------------- */
 
+// CALLUM: added code at lines 859 and 2019, to check for if viscosity is in the input file, then calles a method to set velocity paramters
+
 #include "input.h"
 #include <mpi.h>
 #include <cstdlib>
@@ -850,6 +852,9 @@ int Input::execute_command()
   else if (!strcmp(command,"undump")) undump();
   else if (!strcmp(command,"unfix")) unfix();
   else if (!strcmp(command,"units")) units();
+  
+  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  else if (!strcmp(command,"veolicity")) set_viscosity();
 
   else flag = 0;
 
@@ -2011,4 +2016,11 @@ void Input::units()
   if (domain->box_exist)
     error->all(FLERR,"Units command after simulation box is defined");
   update->set_units(arg[0]);
+}
+
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+void Input::set_viscosity()
+{
+    atom->set_viscosity(narg, arg);
 }
