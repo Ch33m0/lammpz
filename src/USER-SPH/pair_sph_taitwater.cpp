@@ -66,6 +66,9 @@ void PairSPHTaitwater::compute(int eflag, int vflag) {
   double *rho = atom->rho;
   double *mass = atom->mass;
   double *de = atom->de;
+  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  //adding energy of atom into computation
+  double *e = atom->e;
   double *drho = atom->drho;
   int *type = atom->type;
   int nlocal = atom->nlocal;
@@ -164,8 +167,9 @@ void PairSPHTaitwater::compute(int eflag, int vflag) {
           mu = h * delVdotDelR / (rsq + 0.01 * h * h);
           double T = ((e[nlocal]-500)/(0.1*4117)+300);
           // not sure about the soundspeed part of this, will need to look into it
-          double alpha = (8*viscosity->computeViscosity(T))/(h*soundspeed[itype]);
-          fvisc = -alpha * (soundspeed[itype]
+         // double alpha = (8*viscosity->computeViscosity(T))/(h*soundspeed[itype]);
+          double alpha = viscosity->computeViscosity(T);
+	  fvisc = -alpha * (soundspeed[itype]
               + soundspeed[jtype]) * mu / (rho[i] + rho[j]);
         } else {
           fvisc = 0.;
