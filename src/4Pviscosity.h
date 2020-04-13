@@ -13,7 +13,7 @@ class Viscosity4P  : public Viscosity {
 public:
 
     Viscosity4P(double p1, double p2, double p3, double p4);
-    double computeViscosity(double temperature);
+    double computeViscosity(int type, double temperature);
 
 
 private:

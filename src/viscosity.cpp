@@ -6,3 +6,7 @@
 using namespace LAMMPS_NS;
 
 Viscosity::Viscosity() {};
+
+int Viscosity::getTypes() {
+    return types;
+}

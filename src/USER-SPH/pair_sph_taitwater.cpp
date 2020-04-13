@@ -56,7 +56,7 @@ void PairSPHTaitwater::compute(int eflag, int vflag) {
 
   int *ilist, *jlist, *numneigh, **firstneigh;
   double vxtmp, vytmp, vztmp, imass, jmass, fi, fj, fvisc, h, ih, ihsq;
-  double rsq, tmp, wfd, delVdotDelR, mu, deltaE;
+  double rsq, tmp, wfd, delVdotDelR, mu, deltaE, realViscI, realViscJ, alpha;
 
   ev_init(eflag, vflag);
 
@@ -164,13 +164,27 @@ void PairSPHTaitwater::compute(int eflag, int vflag) {
         // artificial viscosity (Monaghan 1992)
         if (delVdotDelR < 0.) {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        
           mu = h * delVdotDelR / (rsq + 0.01 * h * h);
           double T = ((e[nlocal]-500)/(0.1*4117)+300);
           // not sure about the soundspeed part of this, will need to look into it
          // double alpha = (8*viscosity->computeViscosity(T))/(h*soundspeed[itype]);
-          double alpha = viscosity->computeViscosity(T);
-	  fvisc = -alpha * (soundspeed[itype]
-              + soundspeed[jtype]) * mu / (rho[i] + rho[j]);
+         
+         // if only one fluid type viscosity is being used
+         if (viscosity->getTypes()==1){
+          alpha = viscosity->computeViscosity(1, T);
+         }
+         // else, if multiple types of fluid types
+         else {
+           realViscI = viscosity->computeViscosity(itype, T);
+           realViscJ = viscosity->computeViscosity(jtype, T);
+           //double ijVisc = ???
+           alpha = (realViscI + realViscJ)/2;
+ 
+         }
+         
+         fvisc = -alpha * (soundspeed[itype] + soundspeed[jtype]) * mu / (rho[i] + rho[j]);
+         
         } else {
           fvisc = 0.;
         }

@@ -133,7 +133,7 @@ void PairSPHIdealGas::compute(int eflag, int vflag) {
           mu = h * delVdotDelR / (rsq + 0.01 * h * h);
           double T = ((e[nlocal]-500)/(0.1*4117)+300);
           //  !!!!!!!!!!!!! BELOW this dosent work.... this guy dosent load soundspeed.... either find another formula or keep this guy the way he was
-          double alpha = viscosity->computeViscosity(T);
+          double alpha = viscosity->computeViscosity(1, T);
           // double alpha = (8*viscosity->computeViscosity(T))/(h*sounspeed[itype]);
           fvisc = -alpha * (ci + cj) * mu / (rho[i] + rho[j]);
         } else {

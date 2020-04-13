@@ -10,9 +10,12 @@ Viscosity4P::Viscosity4P(double p1, double p2, double p3, double p4) {
     this->p2 = p2;
     this->p3 = p3;
     this->p4 = p4;
+    this->types= 1;
 }
 
-double Viscosity4P::computeViscosity(double temp) {
-    return  p1*exp(p2/temp + p3*temp + p4*temp*temp);
+
+double Viscosity4P::computeViscosity(int type, double temp) {
+    if (type==this->types)
+        return  p1*exp(p2/temp + p3*temp + p4*temp*temp);
 } 
 

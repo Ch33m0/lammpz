@@ -13,7 +13,11 @@ namespace LAMMPS_NS {
     public:
     
         Viscosity();
-        virtual double computeViscosity(double temperature)=0;
+        virtual double computeViscosity(int type, double temperature)=0;
+        virtual void addParams(int type, double p1, double p2, double p3, double p4) {};
+        int getTypes();
+        int types;
+        
     };
 }
 

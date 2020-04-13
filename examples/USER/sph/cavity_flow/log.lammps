@@ -1,0 +1,161 @@
+LAMMPS (12 Dec 2018)
+  using 1 OpenMP thread(s) per MPI task
+dimension          2
+units              si
+atom_style         meso
+
+# create simulation box
+region             box block -0.050e-3 1.044e-3 -0.05e-3 1.044e-3 -1.0e-6 1.0e-6 units box
+create_box         3 box
+Created orthogonal box = (-5e-05 -5e-05 -1e-06) to (0.001044 0.001044 1e-06)
+  4 by 4 by 1 MPI processor grid
+
+# create fluid particles
+region             fluid block 0.0001e-3 0.999e-3 0.0001e-3 0.999e-3 EDGE EDGE side in units box
+lattice            sq 0.025e-3
+Lattice spacing in x,y,z = 2.5e-05 2.5e-05 2.5e-05
+create_atoms       1 region fluid
+Created 1521 atoms
+  Time spent = 0.00101113 secs
+
+# create bottom, left, and right wall
+region             walls block 0.0001e-3 0.999e-3 0.0001e-3 EDGE EDGE EDGE side out units box
+lattice            sq2 0.025e-3
+Lattice spacing in x,y,z = 2.5e-05 2.5e-05 2.5e-05
+create_atoms       2 region walls
+Created 593 atoms
+  Time spent = 0.000138998 secs
+
+# create a driver strip of particles, which exerts shear forces on the fluid
+region             driver block EDGE EDGE 0.999e-3 EDGE EDGE EDGE side in units box
+create_atoms       3 region driver
+Created 176 atoms
+  Time spent = 0.000121117 secs
+
+group              fluid type 1
+1521 atoms in group fluid
+group              walls type 2
+593 atoms in group walls
+group              driver type 3
+176 atoms in group driver
+group              integrate_full union fluid driver
+1697 atoms in group integrate_full
+
+mass               3 2.0e-7
+mass               2 2.0e-7
+mass               1 4.0e-7
+set                group all meso/rho 1000.0
+  2290 settings made for meso/rho
+
+# use Tait's EOS in combination with Morris' laminar viscosity.
+# We set rho_0 = 1000 kg/m^3, c = 0.1 m/s, h = 6.5e-5 m.
+# The dynamic viscosity is set to 1.0e-3 Pa s, corresponding to a kinematic viscosity of 1.0e-6 m^2/s
+pair_style         hybrid sph/taitwater/morris
+pair_coeff         * *    sph/taitwater/morris 1000 0.1 1.0e-3 6.5e-5
+pair_coeff         2 3    none # exclude interaction between walls and shear driver
+
+compute            rho_peratom all meso/rho/atom
+compute            e_peratom all meso/e/atom
+compute            ke_peratom all ke/atom
+compute            esph all reduce sum c_e_peratom
+compute            ke all ke
+variable           etot equal c_ke+c_esph
+
+# assign a constant velocity to shear driver
+velocity           driver set 0.001 0.0 0.0 units box
+fix                freeze_fix driver setforce 0.0 0.0 0.0
+
+# do full time integration for shear driver and fluid, but keep walls stationary
+fix                integrate_fix_full integrate_full meso
+fix                integrate_fix_stationary walls meso/stationary
+
+dump               dump_id all custom 100 dump.lammpstrj id type xs ys zs vx vy c_rho_peratom c_e_peratom
+dump_modify        dump_id first yes
+thermo             100
+thermo_style       custom step c_esph v_etot
+thermo_modify      norm no
+
+neighbor           3.0e-6 bin
+timestep           5.0e-5
+run                4000
+Neighbor list info ...
+  update every 1 steps, delay 10 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 6.8e-05
+  ghost atom cutoff = 6.8e-05
+  binsize = 3.4e-05, bins = 33 33 1
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair sph/taitwater/morris, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/2d/newton
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 5.31 | 5.312 | 5.319 Mbytes
+Step c_esph v_etot 
+       0            0     1.76e-11 
+     100 2.3494023e-11  4.53417e-11 
+     200 4.3391624e-11 6.6982632e-11 
+     300 6.4169636e-11 8.9080986e-11 
+     400 8.5362326e-11 1.1205565e-10 
+     500 1.0729082e-10 1.3537258e-10 
+     600 1.2953918e-10 1.5828816e-10 
+     700 1.5167982e-10 1.8063071e-10 
+     800 1.7357574e-10 2.0269959e-10 
+     900 1.9566987e-10 2.2502554e-10 
+    1000 2.1842387e-10 2.4789269e-10 
+    1100 2.4153687e-10 2.7118209e-10 
+    1200 2.6468978e-10 2.9469529e-10 
+    1300 2.8799204e-10 3.1826468e-10 
+    1400 3.1145727e-10 3.4178542e-10 
+    1500 3.3492699e-10 3.6523686e-10 
+    1600 3.5823294e-10 3.8848848e-10 
+    1700 3.8137612e-10 4.1151703e-10 
+    1800 4.0436246e-10 4.3441283e-10 
+    1900 4.272779e-10 4.5736547e-10 
+    2000 4.5027564e-10 4.8047641e-10 
+    2100 4.7321253e-10 5.0347247e-10 
+    2200 4.9585983e-10 5.2609374e-10 
+    2300 5.1799528e-10 5.4816128e-10 
+    2400 5.3955344e-10 5.6965587e-10 
+    2500 5.6048297e-10 5.905616e-10 
+    2600 5.809013e-10 6.1098221e-10 
+    2700 6.0088883e-10 6.3096277e-10 
+    2800 6.2023576e-10 6.5022898e-10 
+    2900 6.3898895e-10 6.6881718e-10 
+    3000 6.5763167e-10 6.8726661e-10 
+    3100 6.7661242e-10 7.0606577e-10 
+    3200 6.9608986e-10 7.2541062e-10 
+    3300 7.1595423e-10 7.4524441e-10 
+    3400 7.3604565e-10 7.654196e-10 
+    3500 7.5638989e-10 7.8590158e-10 
+    3600 7.7702587e-10 8.0665302e-10 
+    3700 7.9802194e-10 8.2771338e-10 
+    3800 8.1915649e-10 8.4886526e-10 
+    3900 8.4019381e-10 8.6987539e-10 
+    4000 8.6094319e-10 8.9055679e-10 
+Loop time of 0.73548 on 16 procs for 4000 steps with 2290 atoms
+
+98.2% CPU use with 16 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.23754    | 0.35002    | 0.48224    |  13.4 | 47.59
+Neigh   | 0.0044672  | 0.0068113  | 0.0098619  |   2.0 |  0.93
+Comm    | 0.1094     | 0.23022    | 0.34595    |  15.1 | 31.30
+Output  | 0.095475   | 0.095885   | 0.097707   |   0.2 | 13.04
+Modify  | 0.013458   | 0.015858   | 0.019562   |   1.5 |  2.16
+Other   |            | 0.03669    |            |       |  4.99
+
+Nlocal:    143.125 ave 169 max 120 min
+Histogram: 4 0 1 2 2 2 1 0 0 4
+Nghost:    190.688 ave 239 max 139 min
+Histogram: 3 1 0 0 3 4 1 0 0 4
+Neighs:    1862.44 ave 2500 max 1261 min
+Histogram: 4 0 2 0 2 1 3 0 1 3
+
+Total # of neighbors = 29799
+Ave neighs/atom = 13.0127
+Neighbor list builds = 133
+Dangerous builds = 0
+Total wall time: 0:00:00

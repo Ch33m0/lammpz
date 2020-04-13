@@ -40,6 +40,7 @@
 #include "utils.h"
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #include "4Pviscosity.h"  //is this necessary for compilation... dont understand that tbh
+#include "4PviscosityM.h"
 
 #ifdef LMP_USER_INTEL
 #include "neigh_request.h"
@@ -97,6 +98,9 @@ Atom::Atom(LAMMPS *lmp) : Pointers(lmp)
 
   rho = drho = e = de = cv = NULL;
   vest = NULL;
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// initalize viscosity to NULL in order to check it
+  viscosity = NULL;
 
   // SPIN package
 
@@ -301,6 +305,9 @@ Atom::~Atom()
   memory->destroy(de);
   memory->destroy(cv);
   memory->destroy(vest);
+  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // destroy viscosity object
+  memory->destroy(viscosity);
 
   memory->destroy(contact_radius);
   memory->destroy(smd_data_9);
@@ -2366,7 +2373,29 @@ void Atom::set_viscosity(int narg, char **arg) {
         this->viscosity = new Viscosity4P(p1, p2, p3, p4);
         printf("4P viscosity chosen\n");
     }
+    else if (!strcmp(arg[0], "4PM")){
+        if (narg != 2) error->all(FLERR,"Viscosity input error: wrong number of arguments for 4PviscosityM style initializer (2 required)");
+        int type;
+        sscanf(arg[1],"%d",&type);
+        this->viscosity = new Viscosity4PM(type);
+        printf("4PM viscosity chosen, for %d particle types\n", type);
+
+    }
+    else if (!strcmp(arg[0], "type")){
+        if (this->viscosity= NULL) error->all(FLERR,"can't add viscosity for type if 4PM viscosity not initialized"); 
+        if (narg != 6) error->all(FLERR,"Viscosity input error: wrong number of arguments for 4PviscosityM type set (6 required)");
+        int type;
+        sscanf(arg[1],"%d",&type);
+        if (this->viscosity->getTypes()< type || type < 1) error->all(FLERR,"not a valid type of particle"); 
+        double p1, p2, p3, p4;
+        sscanf(arg[2],"%lg",&p1);
+        sscanf(arg[3],"%lg",&p2);
+        sscanf(arg[4],"%lg",&p3);
+        sscanf(arg[5],"%lg",&p4);
+        this->viscosity->addParams(type, p1, p2, p3, p4); 
+        printf("4PM viscosity parameters set for particle type %d\n", type);
+    }
     else {
-        printf(" %s", arg[0]);
+        printf("nothing chosen, %s", arg[0]);
     }
 }
