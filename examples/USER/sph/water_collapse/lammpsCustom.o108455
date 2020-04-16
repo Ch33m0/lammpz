@@ -1,0 +1,16 @@
+
+The following have been reloaded with a version change:
+  1) GCCcore/6.4.0 => GCCcore/8.2.0
+  2) binutils/2.28-GCCcore-6.4.0 => binutils/2.31.1-GCCcore-8.2.0
+
+cp: omitting directory ‘/scratch/s309683/LAMMPS/lammps-7Aug19/src’
+--------------------------------------------------------------------------
+mpirun was unable to launch the specified application as it could not access
+or execute an executable:
+
+Executable: ./lmp_mpi
+Node: ccn052
+
+while attempting to start process rank 0.
+--------------------------------------------------------------------------
+16 total processes failed to start

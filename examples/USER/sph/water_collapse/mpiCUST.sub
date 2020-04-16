@@ -83,11 +83,11 @@ module load Eigen/3.3.3-foss-2018a
 ## The main parameter to modify is your mpi program name
 ## - change YOUR_EXECUTABLE to your own filename
 ## 
-cp ${HOME}/LAMMPS/lammps-7Aug19/src .
+##cp ${HOME}/LAMMPS/lammps-7Aug19/src .
 
-##mpirun -machinefile $PBS_NODEFILE -np ${cpus} ${HOME}/LAMMPS/lammps-7Aug19/src/lmp_mpi -in water_collapseVisc.lmp
+mpirun -machinefile $PBS_NODEFILE -np ${cpus} ${HOME}/LAMMPS/lammps-7Aug19/src/lmp_mpi -in water_collapseVisc.lmp
 
-mpirun -machinefile $PBS_NODEFILE -np ${cpus} ./lmp_mpi -in water_collapseVisc.lmp
+##mpirun -machinefile $PBS_NODEFILE -np ${cpus} ./lmp_mpi -in water_collapseVisc.lmp
 
 
 ## Tidy up the log directory

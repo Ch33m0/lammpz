@@ -14,9 +14,11 @@
 /*_intel.h
 /*_intel.cpp
 /*_kokkos.h
+!accelerator_kokkos.h
 /*_kokkos_impl.h
 /*_kokkos.cpp
 /*_omp.h
+!accelerator_omp.h
 /*_omp.cpp
 /*_opt.h
 /*_opt.cpp
@@ -1142,8 +1144,8 @@
 /thr_data.h
 /verlet_split.cpp
 /verlet_split.h
-/write_dump.cpp
-/write_dump.h
+#/write_dump.cpp
+#/write_dump.h
 /xdr_compat.cpp
 /xdr_compat.h
 
