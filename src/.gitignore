@@ -232,8 +232,8 @@
 /atom_vec_dpd.h
 /atom_vec_electron.cpp
 /atom_vec_electron.h
-/atom_vec_ellipsoid.cpp
-/atom_vec_ellipsoid.h
+#/atom_vec_ellipsoid.cpp
+#/atom_vec_ellipsoid.h
 /atom_vec_full.cpp
 /atom_vec_full.h
 /atom_vec_full_hars.cpp
@@ -382,8 +382,8 @@
 /dihedral_harmonic.h
 /dihedral_helix.cpp
 /dihedral_helix.h
-/dihedral_hybrid.cpp
-/dihedral_hybrid.h
+#/dihedral_hybrid.cpp
+#/dihedral_hybrid.h
 /dihedral_multi_harmonic.cpp
 /dihedral_multi_harmonic.h
 /dihedral_nharmonic.cpp
@@ -724,8 +724,8 @@
 /improper_fourier.h
 /improper_harmonic.cpp
 /improper_harmonic.h
-/improper_hybrid.cpp
-/improper_hybrid.h
+#/improper_hybrid.cpp
+#/improper_hybrid.h
 /improper_inversion_harmonic.cpp
 /improper_inversion_harmonic.h
 /improper_ring.cpp
@@ -734,8 +734,8 @@
 /improper_umbrella.h
 /kissfft.h
 /lj_sdk_common.h
-/math_complex.h
-/math_vector.h
+#/math_complex.h
+#/math_vector.h
 /message.cpp
 /message.h
 /mgpt_*.cpp
